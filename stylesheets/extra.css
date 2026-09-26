@@ -1,0 +1,218 @@
+/* ============================================================
+   FGL HPC design system — v2 (2026-09-26)
+   hero, pills, step-flow, cards. Maroon identity + dark-mode aware.
+   ============================================================ */
+:root {
+  --hpc-maroon: #7c1d2e;
+  --hpc-maroon-deep: #4a1018;
+  --hpc-brass: #b98c2f;
+  --hpc-ok: #2e7d32;
+  --hpc-warn: #b26a00;
+}
+
+/* ---------- Hero ---------- */
+.hpc-hero {
+  background:
+    radial-gradient(1200px 400px at 85% -10%, rgba(255,255,255,.14), transparent 60%),
+    linear-gradient(135deg, var(--hpc-maroon-deep) 0%, var(--hpc-maroon) 55%, #a13a2e 120%);
+  border-radius: 16px;
+  color: #fff;
+  padding: 2.4rem 2.4rem 2rem;
+  margin-bottom: 2.2rem;
+  box-shadow: 0 10px 30px rgba(74, 16, 24, .35);
+}
+.hpc-hero h1 {
+  color: #fff !important;
+  font-size: 2.3em;
+  margin: 0 0 .4rem;
+  letter-spacing: -.015em;
+}
+.hpc-hero p { color: rgba(255,255,255,.92); font-size: 1.05em; max-width: 62ch; }
+.hpc-hero .md-button {
+  border: 1px solid rgba(255,255,255,.65);
+  color: #fff;
+  margin-top: .8rem;
+}
+.hpc-hero .md-button:hover { background: rgba(255,255,255,.14); }
+.hpc-hero .md-button--primary {
+  background: #fff;
+  border-color: #fff;
+  color: var(--hpc-maroon);
+  font-weight: 700;
+}
+.hpc-hero .md-button--primary:hover { background: #fdeef0; }
+
+/* ---------- Status pills ---------- */
+.hpc-pills { margin-top: 1.1rem; }
+.hpc-pill {
+  display: inline-block;
+  padding: .18rem .65rem;
+  margin: .15rem .35rem .15rem 0;
+  border-radius: 999px;
+  font-size: .72em;
+  font-weight: 700;
+  letter-spacing: .02em;
+  vertical-align: middle;
+}
+.hpc-pill--ok {
+  background: rgba(46, 125, 50, .14);
+  color: var(--hpc-ok);
+  border: 1px solid rgba(46, 125, 50, .35);
+}
+.hpc-hero .hpc-pill--ok {
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
+  border-color: rgba(255, 255, 255, .5);
+}
+.hpc-pill--warn {
+  background: rgba(178, 106, 0, .12);
+  color: var(--hpc-warn);
+  border: 1px solid rgba(178, 106, 0, .35);
+}
+
+/* ---------- Cards ---------- */
+.md-typeset .grid.cards > ul > li {
+  border: 1px solid rgba(124, 29, 46, .18);
+  border-top: 4px solid var(--hpc-maroon);
+  border-radius: 12px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.md-typeset .grid.cards > ul > li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(124, 29, 46, .22);
+}
+.md-typeset .grid.cards > ul > li > p:first-child {
+  font-size: 1.08em;
+  color: var(--hpc-maroon);
+}
+.md-typeset .grid.cards > ul > li ol { padding-left: 1.2rem; }
+.md-typeset .grid.cards > ul > li ol li { margin: .35rem 0; }
+.md-typeset .hpc-compact > ul > li { border-top-width: 2px; padding: .9rem 1.1rem; }
+
+/* ---------- Step flow ---------- */
+.hpc-steps { counter-reset: hpcstep; margin: 1.4rem 0 1.8rem; }
+.hpc-steps ol, .hpc-steps > div > ol { list-style: none; padding: 0; }
+.hpc-steps ol > li, .hpc-steps > div > ol > li {
+  counter-increment: hpcstep;
+  position: relative;
+  padding: .65rem 1rem .65rem 3.4rem;
+  margin: 0 0 .55rem;
+  background: rgba(124, 29, 46, .045);
+  border-left: 3px solid var(--hpc-maroon);
+  border-radius: 0 10px 10px 0;
+}
+.hpc-steps ol > li::before, .hpc-steps > div > ol > li::before {
+  content: counter(hpcstep);
+  position: absolute;
+  left: .7rem; top: 50%;
+  transform: translateY(-50%);
+  width: 1.9rem; height: 1.9rem;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--hpc-maroon);
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: .85em;
+}
+@media screen and (min-width: 1000px) {
+  .hpc-steps ol, .hpc-steps > div > ol {
+    display: flex; gap: .6rem; flex-wrap: wrap;
+  }
+  .hpc-steps ol > li, .hpc-steps > div > ol > li {
+    flex: 1 1 15%;
+    border-left: none;
+    border-top: 3px solid var(--hpc-maroon);
+    border-radius: 0 0 10px 10px;
+    padding: 2.6rem .8rem .8rem;
+  }
+  .hpc-steps ol > li::before, .hpc-steps > div > ol > li::before {
+    left: .8rem; top: .6rem; transform: none;
+  }
+}
+
+/* ---------- Global polish ---------- */
+.md-typeset h1 { color: var(--hpc-maroon); font-weight: 800; letter-spacing: -.01em; }
+.md-typeset table:not([class]) th {
+  background: rgba(124, 29, 46, .08);
+  font-weight: 700;
+}
+.md-typeset table:not([class]) tr:nth-child(even) td { background: rgba(124, 29, 46, .03); }
+.md-typeset details > summary { font-weight: 700; }
+.md-typeset pre > code { border-radius: 6px; }
+
+/* ---------- Dark mode ---------- */
+[data-md-color-scheme="slate"] .hpc-hero {
+  background:
+    radial-gradient(1200px 400px at 85% -10%, rgba(212,175,55,.12), transparent 60%),
+    linear-gradient(135deg, #2a0a10 0%, #4a1018 60%, #6d1a24 120%);
+}
+[data-md-color-scheme="slate"] .md-typeset h1 { color: var(--hpc-brass); }
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
+  border-color: rgba(212,175,55,.25);
+  border-top-color: var(--hpc-brass);
+}
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li > p:first-child { color: #d4af37; }
+[data-md-color-scheme="slate"] .hpc-steps ol > li,
+[data-md-color-scheme="slate"] .hpc-steps > div > ol > li { background: rgba(212,175,55,.06); }
+
+/* ---------- Zone variants (v3) ---------- */
+.hpc-hero--admin {
+  background:
+    radial-gradient(1200px 400px at 85% -10%, rgba(120,140,160,.18), transparent 60%),
+    linear-gradient(135deg, #14181d 0%, #26323d 55%, #37474f 120%) !important;
+}
+.hpc-hero--users {
+  background:
+    radial-gradient(1200px 400px at 85% -10%, rgba(212,175,55,.20), transparent 60%),
+    linear-gradient(135deg, var(--hpc-maroon-deep) 0%, var(--hpc-maroon) 50%, #8e2f3d 120%) !important;
+}
+.hpc-alerts {
+  border: 1px dashed rgba(178, 106, 0, .55);
+  border-radius: 12px;
+  padding: .4rem 1.2rem;
+  margin: 0 0 1.6rem;
+  background: rgba(178, 106, 0, .06);
+}
+.hpc-alerts p { margin: .55rem 0; }
+
+/* ---------- Tasklists ---------- */
+.md-typeset .task-list-control input[type="checkbox"] { accent-color: var(--hpc-maroon); }
+.md-typeset .task-list-indicator::before { background: var(--hpc-brass); }
+
+/* ---------- Job generator ---------- */
+.hpc-gen { margin: 1rem 0 2rem; }
+.hpc-gen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .8rem; }
+.hpc-gen label { font-size: .82em; font-weight: 700; color: var(--hpc-maroon); }
+[data-md-color-scheme="slate"] .hpc-gen label { color: var(--hpc-brass); }
+.hpc-gen input, .hpc-gen select, .hpc-gen textarea {
+  margin-top: .25rem; padding: .45rem .55rem; font-weight: 400;
+  border: 1px solid rgba(124,29,46,.35); border-radius: 8px; width: 100%;
+  background: #fff; color: inherit; font-family: inherit; font-size: .95em;
+}
+[data-md-color-scheme="slate"] .hpc-gen input,
+[data-md-color-scheme="slate"] .hpc-gen select,
+[data-md-color-scheme="slate"] .hpc-gen textarea { background: #202026; border-color: rgba(212,175,55,.35); }
+.hpc-gen-note { margin-left: .8rem; font-size: .85em; font-weight: 700; }
+.hpc-gen-note.warn { color: #c62828; }
+.hpc-gen-out { max-height: 26rem; overflow: auto; border: 2px solid var(--hpc-maroon); }
+
+/* ---------- Print stylesheet (runbooks) ---------- */
+@media print {
+  .md-header, .md-footer-meta, .md-sidebar, .md-tabs, .md-source,
+  .md-search, .md-clipboard, [role="search"], .announce { display: none !important; }
+  .md-content { margin: 0 !important; }
+  .md-grid { max-width: 100% !important; }
+  .md-typeset { font-size: 10.5pt; color: #000; }
+  .md-typeset h1 { color: #000; }
+  .md-typeset table:not([class]) { font-size: 9pt; }
+  .md-typeset a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #555; }
+  body, .md-content, .md-inner { background: #fff !important; }
+}
+
+/* ---------- Sticky footer (pin "Made with Material" to viewport bottom) ---------- */
+/* hpc-sticky-footer */
+html, body { min-height: 100%; }
+body { display: flex; flex-direction: column; }
+.md-container { flex: 1 0 auto; width: 100%; }
+footer.md-footer { flex-shrink: 0; }
+@media print { body { display: block; } }
