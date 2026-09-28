@@ -1306,6 +1306,12 @@ critical filesystem or turn one pipeline into cluster-wide I/O contention.</p>
 </thead>
 <tbody>
 <tr>
+<td><code>/nvme</code> + <code>/nvme_vf</code> (BeeGFS)</td>
+<td>alignments, sorting, decompression, pipeline intermediates — shared across all nodes</td>
+<td>the only copy of a result</td>
+<td>Fastest shared tier (23.7 TB parallel scratch), but disposable</td>
+</tr>
+<tr>
 <td><code>/home</code></td>
 <td>shell configuration, scripts, notebooks, small personal files</td>
 <td>raw runs, BAM/CRAM collections, large environments</td>
@@ -1349,7 +1355,7 @@ If thousands of small operations run directly against NFS, latency and metadata
 traffic affect everyone. Staging those intermediates locally lets the node use
 its own disks while shared storage carries only inputs and final outputs.</p>
 <p>The safe pattern is:</p>
-<div class="highlight"><pre><span></span><code>shared input → local scratch → computation → shared final result
+<div class="highlight"><pre><span></span><code>shared input → scratch (BeeGFS /nvme or node-local) → computation → shared final result
 </code></pre></div>
 <p>The unsafe pattern is:</p>
 <div class="highlight"><pre><span></span><code>only copy → local scratch → reboot → lost result

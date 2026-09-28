@@ -1182,13 +1182,19 @@
 
 <h1 id="fghpc-storage">FGHPC Storage<a class="headerlink" href="#fghpc-storage" title="Permanent link">&para;</a></h1>
 <p>FGHPC combines large shared filesystems on <code>master</code> with high-capacity local
-disks and NVMe devices on the execution nodes. The same pathname can therefore
-mean very different things operationally: durable shared data, an AutoFS view,
-or disposable node-local working space.</p>
+disks and NVMe devices on the execution nodes, and a BeeGFS parallel scratch
+filesystem spread across the compute nodes' NVMe. The same pathname can
+therefore mean very different things operationally: durable shared data, an
+AutoFS view, shared scratch, or disposable node-local working space.</p>
 <div class="admonition important">
 <p class="admonition-title">Current production state</p>
-<p>Shared storage uses NFSv4 and AutoFS over dedicated ConnectX-5 links.
-BeeGFS is not currently deployed.</p>
+<p>Durable shared storage uses NFSv4 and AutoFS over dedicated ConnectX-5
+links. <strong>BeeGFS is deployed</strong> (September 2026) as the cluster's parallel
+scratch tier: two filesystems — <code>/nvme</code> (21 TB) and <code>/nvme_vf</code> (2.7 TB) —
+backed by the NVMe of <code>node1</code>–<code>node3</code>, with management and metadata on
+<code>master</code>. Clients are live on <code>master</code> and <code>gpunode1</code>; client mounts on
+<code>node1</code>–<code>node3</code> are still being finalized. BeeGFS is scratch: fast and
+shared, but disposable — never the only copy of your data.</p>
 </div>
 <h2 id="storage-at-a-glance">Storage at a glance<a class="headerlink" href="#storage-at-a-glance" title="Permanent link">&para;</a></h2>
 <table>
@@ -1202,6 +1208,13 @@ BeeGFS is not currently deployed.</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><strong>BeeGFS parallel scratch</strong></td>
+<td><code>/nvme</code> + <code>/nvme_vf</code> (NVMe of <code>node1</code>–<code>node3</code>)</td>
+<td style="text-align: right;">23.7 TB</td>
+<td>all nodes as BeeGFS clients</td>
+<td>high-throughput intermediates: alignments, sorting, pipeline temp files</td>
+</tr>
 <tr>
 <td>User homes</td>
 <td><code>master:/home</code>, ZFS pool <code>homefs</code></td>
@@ -1280,12 +1293,30 @@ Always check live values before starting a large workflow.</p>
 </code></pre></div>
 <p>The master copy is authoritative for shared paths. Local worker storage is not
 automatically synchronized to any other node.</p>
+<p>BeeGFS adds a second, parallel scratch tier on top of the NFS tree. Its
+management and metadata services run on <code>master</code>; the actual bytes live on the
+NVMe of <code>node1</code>–<code>node3</code>, and every node mounts it as a client:</p>
+<div class="highlight"><pre><span></span><code>        master (management + metadata)
+                    │
+   ┌────────────────┼────────────────┐
+   │                │                │
+ node1            node2            node3
+ NVMe storage     NVMe storage     NVMe storage
+   └────────────────┴────────────────┘
+                    │
+        striped namespace, mounted by all nodes
+        /nvme  (21 TB)   +   /nvme_vf  (2.7 TB)
+</code></pre></div>
+<p>Use <code>/nvme</code> and <code>/nvme_vf</code> for the fast, throwaway middle of a workflow —
+intermediates, sorting, alignment — and keep the only durable copy on NFS.</p>
 <h2 id="choose-the-right-page">Choose the right page<a class="headerlink" href="#choose-the-right-page" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="shared_storage/">Shared storage</a>: how <code>/home</code>, <code>/nfs_master</code>, <code>/Fungel</code>,
   and <code>/apps</code> are built and exported.</li>
 <li><a href="local_storage/">Local worker storage</a>: exact <code>/DATA</code> and NVMe layout by
   node.</li>
+<li>BeeGFS scratch (<code>/nvme</code>, <code>/nvme_vf</code>): parallel, shared, disposable — see
+  <a href="../best_practices/storage/">data placement</a> for what belongs there.</li>
 <li><a href="mounts/">Mount architecture</a>: NFS sources, AutoFS behavior, dependencies,
   and validation.</li>
 <li>Capacity and health (monitored by the admin; ask if your job feels slow),
@@ -1302,6 +1333,9 @@ findmnt<span class="w"> </span>-T<span class="w"> </span>/home
 findmnt<span class="w"> </span>-T<span class="w"> </span>/nfs_master
 findmnt<span class="w"> </span>-T<span class="w"> </span>/Fungel
 findmnt<span class="w"> </span>-T<span class="w"> </span>/apps
+findmnt<span class="w"> </span>-T<span class="w"> </span>/nvme
+beegfs-df
+fghpc<span class="w"> </span>beegfs
 </code></pre></div>
 <p>On workers, trigger AutoFS using a real child path such as <code>/home/USERNAME</code> or
 <code>/nfsroot/apps</code>; checking only <code>/home</code> does not prove a user's NFS mount works.</p>
