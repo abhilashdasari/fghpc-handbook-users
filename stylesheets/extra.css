@@ -192,6 +192,9 @@
 [data-md-color-scheme="slate"] .hpc-gen input,
 [data-md-color-scheme="slate"] .hpc-gen select,
 [data-md-color-scheme="slate"] .hpc-gen textarea { background: #202026; border-color: rgba(212,175,55,.35); }
+.hpc-gen-copy { margin-left: .8rem; font-size: .85em; font-weight: 700; }
+.hpc-gen-copy.ok { color: var(--hpc-ok); }
+.hpc-gen-copy.fail { color: #c62828; }
 .hpc-gen-note { margin-left: .8rem; font-size: .85em; font-weight: 700; }
 .hpc-gen-note.warn { color: #c62828; }
 .hpc-gen-out { max-height: 26rem; overflow: auto; border: 2px solid var(--hpc-maroon); }

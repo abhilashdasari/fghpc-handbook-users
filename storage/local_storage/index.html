@@ -1458,7 +1458,7 @@ stage durable results back to shared storage.</p>
 using the same path.</p>
 <h2 id="health-checks">Health checks<a class="headerlink" href="#health-checks" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>PATHNAME<span class="w"> </span><span class="k">in</span><span class="w"> </span>/DATA<span class="w"> </span>/NVME_DATA1<span class="w"> </span>/NVME_DATA2<span class="w"> </span>/NVME_DATA3<span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<span class="w">    </span>findmnt<span class="w"> </span>-T<span class="w"> </span><span class="s2">"</span><span class="nv">$PATHNAME</span><span class="s2">"</span>
+<span class="w">    </span>findmnt<span class="w"> </span>-T<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PATHNAME</span><span class="s2">&quot;</span>
 <span class="k">done</span>
 df<span class="w"> </span>-hT<span class="w"> </span>/DATA<span class="w"> </span>/NVME_DATA1<span class="w"> </span>/NVME_DATA2<span class="w"> </span>/NVME_DATA3
 df<span class="w"> </span>-ih<span class="w"> </span>/DATA<span class="w"> </span>/NVME_DATA1<span class="w"> </span>/NVME_DATA2<span class="w"> </span>/NVME_DATA3
@@ -1591,6 +1591,8 @@ nvme<span class="w"> </span>smart-log<span class="w"> </span>/dev/nvmeX
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../../js/stale.js"></script>
+      
+        <script src="../../js/job-generator.js"></script>
       
     
   </body>

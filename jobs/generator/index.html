@@ -1120,12 +1120,13 @@
 
 
 <h1 id="slurm-job-script-generator">🛠️ Slurm job script generator<a class="headerlink" href="#slurm-job-script-generator" title="Permanent link">&para;</a></h1>
-<p>Answer six questions, get a correct, commented <code>sbatch</code> script. Copy it, edit
-the command block, submit. When in doubt, over-asking slightly is better than
-a job that gets cancelled.</p>
+<p>Answer six questions, get a correct, commented <code>sbatch</code> script. The preview
+below updates as you type. Copy it (or download it), edit the command block,
+submit. When in doubt, over-asking slightly is better than a job that gets
+cancelled.</p>
 <div class="hpc-gen">
 
-<form id="genform" oninput="buildScript()">
+<form id="genform">
 <div class="hpc-gen-grid">
 <label>Job name<br><input type="text" id="g_name" value="my_analysis"></label>
 <label>Partition<br><select id="g_part"><option value="compute">compute (default)</option><option value="gpu">gpu — ask admin first (currently inactive)</option></select></label>
@@ -1152,58 +1153,19 @@ a job that gets cancelled.</p>
 </textarea></label>
 </form>
 
-<button class="md-button md-button--primary" style="margin-top:.8rem" onclick="copyGen()">📋 Copy script</button>
+<button id="g_copybtn" class="md-button md-button--primary" style="margin-top:.8rem">📋 Copy script</button>
+<button id="g_dlbtn" class="md-button" style="margin-top:.8rem;margin-left:.4rem">⬇ Download job.sh</button>
+<span id="g_copy" class="hpc-gen-copy"></span>
 <span id="g_note" class="hpc-gen-note"></span>
 
 <pre id="g_out" class="hpc-gen-out"><code></code></pre>
 </div>
 
-<script>
-function buildScript() {
-  const v = id => document.getElementById(id).value.trim();
-  const mods = [...document.getElementById('g_mods').selectedOptions].map(o => o.value);
-  const gpu = parseInt(v('g_gpu') || '0');
-  const hrs = String(v('g_hrs') || '24').padStart(2, '0');
-  const lines = [];
-  lines.push('#!/bin/bash');
-  lines.push('#SBATCH --job-name=' + (v('g_name') || 'myjob'));
-  lines.push('#SBATCH --partition=' + v('g_part'));
-  lines.push('#SBATCH --cpus-per-task=' + (v('g_cpus') || '8'));
-  lines.push('#SBATCH --mem=' + (v('g_mem') || '32') + 'G');
-  lines.push('#SBATCH --time=' + hrs + ':00:00');
-  if (gpu > 0) lines.push('#SBATCH --gres=gpu:' + gpu);
-  lines.push('#SBATCH --output=logs/%x_%j.out');
-  lines.push('#SBATCH --error=logs/%x_%j.err');
-  lines.push('');
-  lines.push('set -euo pipefail');
-  lines.push('mkdir -p logs');
-  if (mods.length) { lines.push(''); lines.push('module load ' + mods.join(' ')); }
-  if (gpu > 0) { lines.push(''); lines.push('# No CUDA/PyTorch modules on the cluster — use conda or singularity --nv for GPU stacks.'); }
-  lines.push('');
-  lines.push('cd "$SLURM_SUBMIT_DIR" || exit 1');
-  lines.push('');
-  lines.push('# ---- your commands ----');
-  lines.push(document.getElementById('g_cmd').value || '# add your commands here');
-  document.querySelector('#g_out code').textContent = lines.join('\n') + '\n';
-  const warn = [];
-  if (parseInt(v('g_mem')) > 950) warn.push('memory > 950G: only node1-3 have 1 TB; gpunode1 has ~273G.');
-  if (gpu > 0 && v('g_part') !== 'gpu') warn.push('GPUs requested on compute partition — switch partition (after checking with admin).');
-  if (v('g_part') === 'gpu') warn.push('gpu partition is currently INACTIVE — coordinate with the admin before submitting.');
-  document.getElementById('g_note').textContent = warn.join(' ');
-  document.getElementById('g_note').className = 'hpc-gen-note' + (warn.length ? ' warn' : '');
-}
-function copyGen() {
-  navigator.clipboard.writeText(document.querySelector('#g_out code').textContent)
-    .then(() => { const n = document.getElementById('g_note'); n.textContent = 'Copied ✓'; });
-}
-buildScript();
-</script>
-
 <details class="tip">
 <summary>How to use the script you just copied</summary>
 <p>Save it as <code>job.sh</code>, put your data on shared storage, then:</p>
 <div class="highlight"><pre><span></span><code>sbatch<span class="w"> </span>job.sh<span class="w">        </span><span class="c1"># submit</span>
-squeue<span class="w"> </span>-u<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span><span class="w">    </span><span class="c1"># watch it</span>
+squeue<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">&quot;</span><span class="w">    </span><span class="c1"># watch it</span>
 </code></pre></div>
 </details>
 
@@ -1334,6 +1296,8 @@ squeue<span class="w"> </span>-u<span class="w"> </span><span class="s2">"</span
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../../js/stale.js"></script>
+      
+        <script src="../../js/job-generator.js"></script>
       
     
   </body>

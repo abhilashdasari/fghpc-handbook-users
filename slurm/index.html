@@ -1384,7 +1384,7 @@ workloads through Slurm on the execution nodes.</p>
 <p>Run these three commands first:</p>
 <div class="highlight"><pre><span></span><code>sinfo
 squeue
-squeue<span class="w"> </span>-u<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
+squeue<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">&quot;</span>
 </code></pre></div>
 <table>
 <thead>
@@ -1410,7 +1410,7 @@ squeue<span class="w"> </span>-u<span class="w"> </span><span class="s2">"</span
 </table>
 <h2 id="see-the-current-jobs-and-queue">See the current jobs and queue<a class="headerlink" href="#see-the-current-jobs-and-queue" title="Permanent link">&para;</a></h2>
 <p>Use this readable queue format:</p>
-<div class="highlight"><pre><span></span><code>squeue<span class="w"> </span>-o<span class="w"> </span><span class="s1">'%.12i %.12P %.24j %.12u %.2t %.10M %.6D %R'</span>
+<div class="highlight"><pre><span></span><code>squeue<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;%.12i %.12P %.24j %.12u %.2t %.10M %.6D %R&#39;</span>
 </code></pre></div>
 <p>The columns mean: job ID, partition, job name, user, state, elapsed time,
 number of nodes, and allocated node or pending reason.</p>
@@ -1422,7 +1422,7 @@ number of nodes, and allocated node or pending reason.</p>
 <p>In this example, job <code>1842</code> is running on <code>node1</code>. Job <code>1843</code> is waiting
 because the requested resources are not currently available.</p>
 <h3 id="show-only-waiting-jobs">Show only waiting jobs<a class="headerlink" href="#show-only-waiting-jobs" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>squeue<span class="w"> </span>--states<span class="o">=</span>PENDING<span class="w"> </span>-o<span class="w"> </span><span class="s1">'%.12i %.12P %.24j %.12u %.10M %.6D %R'</span>
+<div class="highlight"><pre><span></span><code>squeue<span class="w"> </span>--states<span class="o">=</span>PENDING<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;%.12i %.12P %.24j %.12u %.10M %.6D %R&#39;</span>
 </code></pre></div>
 <p>The final column is important. Common reasons are:</p>
 <table>
@@ -1458,7 +1458,7 @@ because the requested resources are not currently available.</p>
 </table>
 <h2 id="see-when-a-waiting-job-may-start">See when a waiting job may start<a class="headerlink" href="#see-when-a-waiting-job-may-start" title="Permanent link">&para;</a></h2>
 <p>Ask Slurm for an estimated start time for your pending jobs:</p>
-<div class="highlight"><pre><span></span><code>squeue<span class="w"> </span>--start<span class="w"> </span>-u<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
+<div class="highlight"><pre><span></span><code>squeue<span class="w"> </span>--start<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">&quot;</span>
 </code></pre></div>
 <p>For one job:</p>
 <div class="highlight"><pre><span></span><code>squeue<span class="w"> </span>--start<span class="w"> </span>--jobs<span class="w"> </span>JOB_ID
@@ -1472,7 +1472,7 @@ estimate is available, inspect the <code>Reason=</code> field from <code>scontro
 </code></pre></div>
 <h2 id="see-free-and-busy-nodes">See free and busy nodes<a class="headerlink" href="#see-free-and-busy-nodes" title="Permanent link">&para;</a></h2>
 <p>Start with the partition summary:</p>
-<div class="highlight"><pre><span></span><code>sinfo<span class="w"> </span>-o<span class="w"> </span><span class="s1">'%P %a %l %D %t %C %G'</span>
+<div class="highlight"><pre><span></span><code>sinfo<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;%P %a %l %D %t %C %G&#39;</span>
 </code></pre></div>
 <p><strong>Illustrative example only — not live cluster output:</strong></p>
 <div class="highlight"><pre><span></span><code>PARTITION AVAIL TIMELIMIT NODES STATE CPUS(A/I/O/T) GRES
@@ -1487,7 +1487,7 @@ gpu          up 2-00:00:00     1 mix  32/96/0/128   gpu:2
 <li><code>CPUS(A/I/O/T)</code> means allocated, idle, other, and total CPUs.</li>
 </ul>
 <p>List individual nodes and their resources:</p>
-<div class="highlight"><pre><span></span><code>sinfo<span class="w"> </span>-N<span class="w"> </span>-o<span class="w"> </span><span class="s1">'%N %T %c %m %G %E'</span>
+<div class="highlight"><pre><span></span><code>sinfo<span class="w"> </span>-N<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;%N %T %c %m %G %E&#39;</span>
 </code></pre></div>
 <p>To show only fully idle nodes:</p>
 <div class="highlight"><pre><span></span><code>sinfo<span class="w"> </span>--states<span class="o">=</span>idle<span class="w"> </span>-N
@@ -1519,10 +1519,10 @@ scontrol<span class="w"> </span>show<span class="w"> </span>job<span class="w"> 
 may not be available immediately after job completion.</p>
 <h2 id="handy-daily-commands">Handy daily commands<a class="headerlink" href="#handy-daily-commands" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="c1"># My running and waiting jobs</span>
-squeue<span class="w"> </span>-u<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
+squeue<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USER</span><span class="s2">&quot;</span>
 
 <span class="c1"># All jobs with useful columns</span>
-squeue<span class="w"> </span>-o<span class="w"> </span><span class="s1">'%.12i %.12P %.24j %.12u %.2t %.10M %.6D %R'</span>
+squeue<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;%.12i %.12P %.24j %.12u %.2t %.10M %.6D %R&#39;</span>
 
 <span class="c1"># Only jobs waiting in the queue</span>
 squeue<span class="w"> </span>--states<span class="o">=</span>PENDING
@@ -1531,7 +1531,7 @@ squeue<span class="w"> </span>--states<span class="o">=</span>PENDING
 sinfo
 
 <span class="c1"># Individual node state and resources</span>
-sinfo<span class="w"> </span>-N<span class="w"> </span>-o<span class="w"> </span><span class="s1">'%N %T %c %m %G %E'</span>
+sinfo<span class="w"> </span>-N<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;%N %T %c %m %G %E&#39;</span>
 
 <span class="c1"># Reasons for down or drained nodes</span>
 sinfo<span class="w"> </span>-R
@@ -1661,6 +1661,8 @@ sinfo<span class="w"> </span>-R
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../js/stale.js"></script>
+      
+        <script src="../js/job-generator.js"></script>
       
     
   </body>
