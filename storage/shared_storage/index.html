@@ -722,6 +722,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#beegfs-parallel-scratch-nvme-nvme_vf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BeeGFS parallel scratch: /nvme + /nvme_vf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#master-filesystem-map" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1219,6 +1230,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#beegfs-parallel-scratch-nvme-nvme_vf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BeeGFS parallel scratch: /nvme + /nvme_vf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#master-filesystem-map" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1314,7 +1336,52 @@
 
 <h1 id="shared-storage-on-master">Shared Storage on Master<a class="headerlink" href="#shared-storage-on-master" title="Permanent link">&para;</a></h1>
 <p><code>master</code> is both the cluster control point and the current shared-storage
-server. Its local filesystems must be healthy before workers attempt NFS mounts.</p>
+server. Its local filesystems must be healthy before workers attempt NFS mounts.
+The cluster also has a <strong>BeeGFS parallel scratch tier</strong> — two partitions built
+by joining the NVMe disks of <code>node1</code>–<code>node3</code> into striped namespaces that every
+user can use from every node. See the BeeGFS section below.</p>
+<h2 id="beegfs-parallel-scratch-nvme-nvme_vf">BeeGFS parallel scratch: <code>/nvme</code> + <code>/nvme_vf</code><a class="headerlink" href="#beegfs-parallel-scratch-nvme-nvme_vf" title="Permanent link">&para;</a></h2>
+<p>The cluster's NVMe disks were joined into <strong>two BeeGFS partitions</strong> — the
+fastest shared drives on the cluster, available to <strong>anyone on any node</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Partition</th>
+<th style="text-align: right;">Capacity</th>
+<th>Speed (measured 1 GiB direct write, single stream, from <code>master</code>, Sep 2026)</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/nvme</code></td>
+<td style="text-align: right;">21 TB</td>
+<td>~880 MB/s</td>
+<td>the <strong>fast</strong> shared tier — alignments, sorting, pipeline intermediates</td>
+</tr>
+<tr>
+<td><code>/nvme_vf</code></td>
+<td style="text-align: right;">2.7 TB</td>
+<td>~970 MB/s</td>
+<td>the <strong>fastest</strong> shared tier — latency-sensitive and hottest intermediates</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Backed by the NVMe of <code>node1</code>–<code>node3</code>; management and metadata run on
+  <code>master</code>. All nodes mount both partitions as BeeGFS clients.</li>
+<li>Use them for the fast, throwaway middle of a workflow — anything a pipeline
+  creates and discards. They are shared, so large files there are visible to
+  all users on all nodes.</li>
+<li>They are <strong>scratch, not storage</strong>: nothing here is backed up, and data can be
+  deleted at any time. Keep the only durable copy of your results on NFS
+  (<code>/nfs_master</code> or <code>/Fungel</code>).</li>
+</ul>
+<p>Quick check:</p>
+<div class="highlight"><pre><span></span><code>df<span class="w"> </span>-hT<span class="w"> </span>/nvme<span class="w"> </span>/nvme_vf
+ls<span class="w"> </span>/nvme
+findmnt<span class="w"> </span>-T<span class="w"> </span>/nvme
+</code></pre></div>
 <h2 id="master-filesystem-map">Master filesystem map<a class="headerlink" href="#master-filesystem-map" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
